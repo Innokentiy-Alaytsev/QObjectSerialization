@@ -30,15 +30,14 @@
 
 
 namespace QObjectSerialization {
+	class QVector3DDeserializer : public CustomDeserializer {
+	public:
+		static std::shared_ptr< CustomDeserializer > createObject ();
 
+		static QString typeId ();
 
-class QVector3DDeserializer : public CustomDeserializer {
-public:
-	static std::shared_ptr< CustomDeserializer > createObject ();
-
-	static QString typeId ();
-
-	virtual QVariant deserialize (QDomNode i_serializedValue) override;
-};
+		virtual QVariant deserialize (QDomNode i_serializedValue) override;
+	};
+}
 
 #endif // QVECTOR3DDESERIALIZER_H
