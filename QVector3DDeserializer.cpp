@@ -22,46 +22,37 @@
   SOFTWARE.
 */
 
-#ifndef CUSTOMSERIALIZER_H
-#define CUSTOMSERIALIZER_H
+#include <QVector3D>
 
 
-#include <QDomNode>
-#include <QString>
-#include <QVariant>
+#include "Factory/FactoryHelperMacros.h"
 
 
-#include "Factory/Factory.h"
+#include "QVector3DDeserializer.h"
 
 
-class QObject;
+using namespace QObjectSerialization;
 
 
-namespace QObjectSerialization {
-	/**
-	  @biref Interface for user defuned serializers.
-	*/
-	class CustomSerializer: public Factory::IProducible {
-	public:
-		static std::shared_ptr< CustomSerializer > createObject();
+FACTORY_ADD_PRODUCTION (CustomDeserializer, QVector3DDeserializer)
 
-		static QString typeId ();
+FACTORY_PRODUCTION_CREATE_OBJECT (CustomDeserializer, QVector3DDeserializer)
 
-		/**
-		  @brief Performs seralization of given value.
+FACTORY_PRODUCTION_TYPEID_QT_METATYPE (QVector3DDeserializer, QVector3D)
 
-		  @details The value is expected to be stored in QVariant. The reason for that is that
-		  this class is supposed to be used to serialize objects properties, values of which are
-		  retreived as QVariant is requested with property() function.
 
-		  @param [in] i_value Property value to serialize.
+QVariant QVector3DDeserializer::deserialize (QDomNode i_serializedValue) {
+	QVariant deserializedValue;
 
-		  @returns QDomNode with serialized value.
-		*/
-		virtual QDomNode serialize (QVariant i_value) = 0;
-	};
+	QDomElement serializedElement (i_serializedValue.toElement ());
 
-	template class Factory::Factory< CustomSerializer >;
+	if (!serializedElement.isNull () &&
+		(typeId () == serializedElement.tagName ())) {
+		deserializedValue = QVector3D (
+			serializedElement.attribute ("x").toFloat (),
+			serializedElement.attribute ("y").toFloat (),
+			serializedElement.attribute ("z").toFloat ());
+	}
+
+	return deserializedValue;
 }
-
-#endif // CUSTOMSERIALIZER_H

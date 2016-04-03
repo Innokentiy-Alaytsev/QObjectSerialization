@@ -22,46 +22,50 @@
   SOFTWARE.
 */
 
-#ifndef CUSTOMSERIALIZER_H
-#define CUSTOMSERIALIZER_H
+#include <QVector3D>
 
 
-#include <QDomNode>
-#include <QString>
-#include <QVariant>
+#include "Factory/FactoryHelperMacros.h"
 
 
-#include "Factory/Factory.h"
+#include "QVector3DSerializer.h"
 
 
-class QObject;
+using namespace QObjectSerialization;
 
 
-namespace QObjectSerialization {
-	/**
-	  @biref Interface for user defuned serializers.
-	*/
-	class CustomSerializer: public Factory::IProducible {
-	public:
-		static std::shared_ptr< CustomSerializer > createObject();
+FACTORY_ADD_PRODUCTION (CustomSerializer, QVector3DSerializer)
 
-		static QString typeId ();
+FACTORY_PRODUCTION_CREATE_OBJECT (CustomSerializer, QVector3DSerializer)
 
-		/**
-		  @brief Performs seralization of given value.
+FACTORY_PRODUCTION_TYPEID_QT_METATYPE (QVector3DSerializer, QVector3D)
 
-		  @details The value is expected to be stored in QVariant. The reason for that is that
-		  this class is supposed to be used to serialize objects properties, values of which are
-		  retreived as QVariant is requested with property() function.
 
-		  @param [in] i_value Property value to serialize.
+QDomNode QVector3DSerializer::serialize (QVariant i_value) {
+	QDomDocument serializedDocument;
 
-		  @returns QDomNode with serialized value.
-		*/
-		virtual QDomNode serialize (QVariant i_value) = 0;
-	};
+	if (i_value.canConvert< QVector3D > ()) {
+		QDomElement serializedElement (
+			serializedDocument
+			.createElement (typeId ()));
 
-	template class Factory::Factory< CustomSerializer >;
+		serializedDocument.appendChild (serializedElement);
+
+		QVector3D vactor3D (i_value.value< QVector3D > ());
+
+		serializedElement.setAttribute (
+			"x",
+			QString::number (
+				vactor3D.x ()));
+		serializedElement.setAttribute (
+			"y",
+			QString::number (
+				vactor3D.y ()));
+		serializedElement.setAttribute (
+			"z",
+			QString::number (
+				vactor3D.z ()));
+	}
+
+	return QDomNode (serializedDocument);
 }
-
-#endif // CUSTOMSERIALIZER_H
