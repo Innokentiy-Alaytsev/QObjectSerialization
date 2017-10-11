@@ -31,7 +31,6 @@
 
 #include <QMetaObject>
 #include <QMetaProperty>
-#include <QSet>
 
 
 #include "CustomDeserializer.h"
@@ -45,30 +44,6 @@ using namespace QObjectSerialization;
    Namespace defiden in order to prevent colisions.
 */
 namespace QObjectSerializationPrivate {
-	/**
-	   @brief A helper function to get object's properties names set.
-
-	   @param [in] i_object Object to get its properties set.
-
-	   @returns Set of object's properties names.
-	*/
-	QSet< QString > objectPropertiesSet (QObject* i_object) {
-		QSet< QString > objectPropertiesSet;
-
-		const QMetaObject* metaObject (i_object->metaObject ());
-
-		for (int propertyIndex (0),
-		     propertiesCount (metaObject->propertyCount ());
-		     propertyIndex < propertiesCount;
-		     ++propertyIndex) {
-			QMetaProperty metaProperty (metaObject->property (propertyIndex));
-
-			objectPropertiesSet.insert (metaProperty.name ());
-		}
-
-		return objectPropertiesSet;
-	}
-
 	/**
 	   @brief A helper function to get XML DOM node tag name for object.
 
@@ -115,6 +90,23 @@ namespace QObjectSerializationPrivate {
 
 
 using namespace QObjectSerializationPrivate;
+
+
+QSet< QString > QObjectSerialization::objectPropertiesSet (QObject* i_object) {
+	QSet< QString > objectPropertiesSet;
+
+	const QMetaObject* metaObject (i_object->metaObject ());
+
+	for (int propertyIndex (0), propertiesCount (metaObject->propertyCount ());
+	     propertyIndex < propertiesCount;
+	     ++propertyIndex) {
+		QMetaProperty metaProperty (metaObject->property (propertyIndex));
+
+		objectPropertiesSet.insert (metaProperty.name ());
+	}
+
+	return objectPropertiesSet;
+}
 
 
 QDomNode QObjectSerialization::serialize (

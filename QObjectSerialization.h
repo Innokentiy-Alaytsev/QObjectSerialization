@@ -28,6 +28,7 @@
 
 
 #include <QDomNode>
+#include <QSet>
 #include <QString>
 #include <QStringList>
 
@@ -54,6 +55,15 @@ namespace QObjectSerialization {
 	    */
 		TAG_USER_DEFINED
 	} TagNameSource_t;
+
+	/**
+	   @brief A helper function to get object's properties names set.
+
+	   @param [in] i_object Object to get its properties set.
+
+	   @returns Set of object's properties names.
+	*/
+	QSet< QString > objectPropertiesSet (QObject* i_object);
 
 	/**
 	   @brief Perform serialization of object properties to XML DOM.
